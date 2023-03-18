@@ -1,51 +1,95 @@
+<script setup>
+    import PrevIcon from './icons/prevIcon.vue';
+    import NextIcon from './icons/nextIcon.vue';
+    import Skeleton from './Skeleton.vue'
+</script>
+
 <script>
+
     export default {
+
         data() {
             return {
-                data: [],
+                repoData: [],
+                page: 1,
+                view: "",
                 currentPage: 1,
-                view: ""
+                loading: false,
+                perPage: 6,
+                skeleton: [...new Array(6)]
+
             }
         },
         methods: {
-            showMore: function() {
-                this.currentPage += 1
-                // console.log(this.currentPage)
-            }
-        },
-        mounted() {
-            fetch(`https://api.github.com/users/mbonamensa/repos?per_page=6&page=${this.currentPage}`, {
+            fetchData: function() {
+                this.loading = true
+                fetch(`https://api.github.com/users/mbonamensa/repos`, {
                 headers: {
                     Accept: "application/json"
                 },
             }) 
             .then((res) => res.json()) 
-            // .then((data) => (this.data = data))
             .then((data) => {
-                if (data.length === 0) {
-                    this.view = "End of Repos"
-                }else {
-                    this.view = "View More"
-                    this.data = [...this.data, ...data]
-                    console.log(this.currentPage)
+                {
+                    this.repoData = this.repoData.concat(data)
+                    this.loading = false
                 }
             })
+            },
+            prevPage () {
+                if (this.currentPage === 1) {
+                    return
+                }else {
+
+                    this.currentPage--
+                }
+            },
+            nextPage () {
+                this.currentPage++
+            },
+            
+        },
+        mounted() {
+            this.fetchData()
+        },
+        computed: {
+            showMore: function() {
+                let start = (this.currentPage - 1) * this.perPage
+                let end = start + this.perPage
+                this.loading = false
+                return this.repoData.slice(start, end)
+            },
+
+            lastPage: function() {
+                let length = this.repoData.length
+                return length / this.perPage
+            }
         }
         
     }
 </script>
 
 <template>
-    <div class="repo-container">   
-        <div v-for="repo in data" class="repo-card" :key="repo.id">
-            <router-link :to="`/details/${repo.name}`"><h2 class="repo-name">{{ repo.name }}</h2></router-link>
-            <p class="language">Langauge: {{ repo.language }}</p>
-            <p class="date">Start date & time: {{ repo.created_at }}</p>
-            <p class="visibility">Visibility: {{ repo.visibility }}</p>
+
+    <div>
+        <div class="repo-container"> 
+            <Skeleton v-if="loading" v-for="n in skeleton">{{ skeleton }}</Skeleton>  
+            <div v-else v-for="repo in showMore" class="repo-card" :key="repo.id">
+                <router-link :to="`/details/${repo.name}`"><h2 class="repo-name">{{ repo.name }}</h2></router-link>
+                <p class="language">Langauge: {{ repo.language }}</p>
+                <p class="date">Start date & time: {{ repo.created_at }}</p>
+                <p class="visibility">Visibility: {{ repo.visibility }}</p>
+            </div>
+           
+        </div>
+        <div class="pagination">
+            <button class="view-more" :class="currentPage === 1 ? 'disabled' : '' " @click="prevPage"><PrevIcon /></button>
+            <p class="current-page">{{ currentPage }}</p>
+            <button class="view-more" :class="currentPage === lastPage ? 'disabled' : '' " @click="nextPage"><NextIcon /></button>
         </div>
     </div>
-    <p class="view-more" @click="showMore">{{ view }}</p>
-  
+
+            
 </template>
 
 
@@ -77,5 +121,30 @@
 p {
     padding: 5px 0;
 }
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 3rem 0;
+}
+
+button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+button svg {
+    width: 2rem;
+}
+
+.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+
 
 </style>
