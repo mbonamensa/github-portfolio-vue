@@ -5,6 +5,7 @@
     import ForkIcon from './icons/forkIcon.vue';
     import StarIcon from './icons/starIcon.vue';
     import WatchIcon from './icons/watchIcon.vue';
+    import DetailsSkeleton from './DetailsSkeleton.vue';
  
 
     export default {
@@ -12,38 +13,48 @@
         return {
             details: [],
             branches: [],
-            deployments: []
+            deployments: [],
+            loading: false,
 
         };
     },
-    mounted() {
-        fetch(`https://api.github.com/repos/mbonamensa/${this.$route.params.id}`, {
+    methods: {
+        fetchData: function () {
+            this.loading = true
+            fetch(`https://api.github.com/repos/mbonamensa/${this.$route.params.id}`, {
             headers: {
                 Accept: "application/json"
             },
-        })
-        .then((res) => res.json())
-        .then((details) => (this.details = details));
+            })
+            .then((res) => res.json())
+            .then((details) => (this.details = details));
 
-        fetch(`https://api.github.com/repos/mbonamensa/${this.$route.params.id}/branches`, {
-            headers: {
-                Accept: "application/json"
-            },
-        })
-        .then((res) => res.json())
-        .then((branches) => (this.branches = branches));
+            fetch(`https://api.github.com/repos/mbonamensa/${this.$route.params.id}/branches`, {
+                headers: {
+                    Accept: "application/json"
+                },
+            })
+            .then((res) => res.json())
+            .then((branches) => (this.branches = branches));
 
-        fetch(`https://api.github.com/repos/mbonamensa/${this.$route.params.id}/deployments`, {
-            headers: {
-                Accept: "application/json"
-            },
-        })
-        .then((res) => res.json())
-        .then((deployments) => (this.deployments = deployments));
+            fetch(`https://api.github.com/repos/mbonamensa/${this.$route.params.id}/deployments`, {
+                headers: {
+                    Accept: "application/json"
+                },
+            })
+            .then((res) => res.json())
+            .then((deployments) => {
+                this.deployments = deployments
+                // this.loading = false
+            })
 
-
+            
+        }
     },
-    components: { StarIcon, WatchIcon, ForkIcon, BranchIcon, BackIcon },
+    mounted() {
+        this.fetchData()
+    },
+    components: { StarIcon, WatchIcon, ForkIcon, BranchIcon, BackIcon, DetailsSkeleton },
     
 }
 
@@ -51,8 +62,9 @@
 
 <template>
     <div id="repodetail">
-        <router-link :to="``"><p class="back"><BackIcon/> back</p></router-link>
-        <div class="repodetail-card">
+        <router-link :to="`/`"><button class="back"><BackIcon/> back</button></router-link>
+        <DetailsSkeleton v-if="loading"/>
+        <div v-else class="repodetail-card">
             <h2 class="repo-name">{{ details.name }}</h2>
             <div class="repo-mini-details">
                 <p><StarIcon /> Stars: {{ details.stargazers_count }}</p>
@@ -65,7 +77,6 @@
             <p v-if="deployments.length === 0">Live site: none</p>
             <p v-else>Live site: <a :href="`https://mbonamensa.github.io/${details.name}`">mbonamensa.github.io/{{ details.name }}</a></p>
             <p><a :href="`https://github.com/${details.full_name}`">View on Github</a></p>
-
         </div>
     </div>
   
@@ -128,6 +139,7 @@
 
 .back {
     display: flex;
+    align-items: center;
     gap: 0.5rem;
     margin-bottom: 2rem;
     color: #00bd7e;

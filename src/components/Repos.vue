@@ -30,10 +30,8 @@
             }) 
             .then((res) => res.json()) 
             .then((data) => {
-                {
-                    this.repoData = this.repoData.concat(data)
-                    this.loading = false
-                }
+                this.repoData = this.repoData.concat(data)
+                this.loading = false
             })
             },
             prevPage () {
@@ -136,7 +134,7 @@ button {
     cursor: pointer;
 }
 
-button svg {
+.view-more svg {
     width: 2rem;
 }
 

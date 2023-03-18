@@ -2,6 +2,12 @@
      <div>
         <div class="repo-card">
             <h2 class="skeleton hdn"></h2>
+            <div class="repo-mini-details">
+                <div class="skeleton icn"></div>
+                <div class="skeleton icn"></div>
+                <div class="skeleton icn"></div>
+                <div class="skeleton icn"></div>
+            </div>
             <div class="skeleton pgph"></div>
             <div class="skeleton pgph"></div>
             <div class="skeleton pgph"></div>
@@ -25,7 +31,11 @@
 
 .pgph {
     width: 40%;
-    height: 1rem;
+    height: 1.2rem;
+}
+
+.icn {
+    height: 1.2rem;
 }
 
 @keyframes pulse-bg {
