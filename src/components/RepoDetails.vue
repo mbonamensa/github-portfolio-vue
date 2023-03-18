@@ -45,7 +45,7 @@
             .then((res) => res.json())
             .then((deployments) => {
                 this.deployments = deployments
-                // this.loading = false
+                this.loading = false
             })
 
             
