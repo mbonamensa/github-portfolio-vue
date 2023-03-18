@@ -1,5 +1,6 @@
 <script>
 
+    import BackIcon from './icons/backIcon.vue';
     import BranchIcon from './icons/branchIcon.vue';
     import ForkIcon from './icons/forkIcon.vue';
     import StarIcon from './icons/starIcon.vue';
@@ -42,30 +43,31 @@
 
 
     },
-    components: { StarIcon, WatchIcon, ForkIcon, BranchIcon },
+    components: { StarIcon, WatchIcon, ForkIcon, BranchIcon, BackIcon },
     
 }
 
 </script>
 
 <template>
-     <div id="repodetail">
-            <div class="repodetail-card">
-                <h2 class="repo-name">{{ details.name }}</h2>
-                <div class="repo-mini-details">
-                    <p><StarIcon /> Stars: {{ details.stargazers_count }}</p>
-                    <p><WatchIcon /> Watch: {{ details.watchers }}</p>
-                    <p><ForkIcon /> Forks: {{ details.forks }}</p>
-                    <p><BranchIcon /> Branches: {{ branches.length }}</p>
-                </div>
-                <p v-if="details.language === null">Main Language: none</p>
-                <p v-else="details.language === null">Main Language: {{ details.language }}</p>
-                <p v-if="deployments.length === 0">Live site: none</p>
-                <p v-else>Live site: <a :href="`https://mbonamensa.github.io/${details.name}`">mbonamensa.github.io/{{ details.name }}</a></p>
-                <p><a :href="`https://github.com/${details.full_name}`">View on Github</a></p>
-
+    <div id="repodetail">
+        <router-link :to="``"><p class="back"><BackIcon/> back</p></router-link>
+        <div class="repodetail-card">
+            <h2 class="repo-name">{{ details.name }}</h2>
+            <div class="repo-mini-details">
+                <p><StarIcon /> Stars: {{ details.stargazers_count }}</p>
+                <p><WatchIcon /> Watch: {{ details.watchers }}</p>
+                <p><ForkIcon /> Forks: {{ details.forks }}</p>
+                <p><BranchIcon /> Branches: {{ branches.length }}</p>
             </div>
+            <p v-if="details.language === null">Main Language: none</p>
+            <p v-else="details.language === null">Main Language: {{ details.language }}</p>
+            <p v-if="deployments.length === 0">Live site: none</p>
+            <p v-else>Live site: <a :href="`https://mbonamensa.github.io/${details.name}`">mbonamensa.github.io/{{ details.name }}</a></p>
+            <p><a :href="`https://github.com/${details.full_name}`">View on Github</a></p>
+
         </div>
+    </div>
   
 </template>
 
@@ -124,5 +126,10 @@
     color: #00bd7e;
 }
 
-
+.back {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    color: #00bd7e;
+}
 </style>
